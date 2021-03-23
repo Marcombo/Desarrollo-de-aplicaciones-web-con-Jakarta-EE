@@ -1,26 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.marcombo.libros.service;
 
 import com.marcombo.libros.entity.Libro;
+import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author fcastillo
- */
+
 @ApplicationScoped
 public class LibroService {
 
-    @PersistenceContext(unitName = "demoPU")
-    private EntityManager em;
+    @PersistenceContext(unitName = "libreriaPU")
+    private EntityManager entityManager;
 
     public Libro findById(Long id) {
         return new Libro();
+    }
+
+    public List<Libro> findAll() {
+        String consulta = "SELECT l FROM Libro l";
+        return entityManager.createQuery(consulta).getResultList();
     }
 }
