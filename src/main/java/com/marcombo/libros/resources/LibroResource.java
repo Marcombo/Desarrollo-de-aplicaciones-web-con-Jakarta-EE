@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.marcombo.libros.resources;
 
 import com.marcombo.libros.service.LibroService;
@@ -15,22 +11,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/**
- *
- * @author fcastillo
- */
+
 @RequestScoped
-@Path("books")
+@Path("libros")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class LibroResource {
 
     @Inject
-    LibroService libroService;
+    private LibroService libroService;
 
     @GET
-    public Response find() {
-        return Response.ok("S").build();
+    public Response getAll() {
+        return Response.ok(libroService.findAll()).build();
     }
 
 }
