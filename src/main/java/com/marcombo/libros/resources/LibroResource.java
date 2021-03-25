@@ -6,6 +6,7 @@ import com.marcombo.libros.mappers.LibroMapper;
 import com.marcombo.libros.service.LibroService;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -18,6 +19,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 @RequestScoped
 @Path("libros")
@@ -31,6 +39,19 @@ public class LibroResource {
     @Inject
     private LibroMapper libroMapper;
 
+    @APIResponses(value = {
+        @APIResponse(
+                responseCode = "200",
+                description = "OK",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = Properties.class))),
+        @APIResponse(
+                responseCode = "404",
+                description = "Not found",
+                content = @Content(mediaType = "text/plain")
+        )
+    })
+    @Operation(summary = "Retorna un listado de libros")
     @GET
     public Response findAll() {
         List<Libro> libros = libroService.findAll();
@@ -38,9 +59,27 @@ public class LibroResource {
         return Response.ok(librosDTO).build();
     }
 
+    @APIResponses(value = {
+        @APIResponse(
+                responseCode = "200",
+                description = "OK",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = Properties.class))),
+        @APIResponse(
+                responseCode = "404",
+                description = "Not found",
+                content = @Content(mediaType = "text/plain")
+        )
+    })
+
     @GET
     @Path("{id}")
-    public Response findById(@PathParam("id") Long id) {
+    public Response findById(@Parameter(
+            description = "Id de libro",
+            required = true,
+            example = "1",
+            schema = @Schema(type = SchemaType.NUMBER))
+            @PathParam("id") Long id) {
         Optional<Libro> libro = libroService.findById(id);
         LibroDTO libroDTO = libroMapper.toDTO(libro.get());
         return Response.ok(libroDTO).build();
