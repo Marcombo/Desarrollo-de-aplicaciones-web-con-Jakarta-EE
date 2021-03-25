@@ -4,7 +4,9 @@ import com.marcombo.libros.dto.LibroDTO;
 import com.marcombo.libros.entity.Libro;
 import com.marcombo.libros.mappers.LibroMapper;
 import com.marcombo.libros.service.LibroService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import javax.enterprise.context.RequestScoped;
@@ -19,6 +21,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -52,6 +56,8 @@ public class LibroResource {
         )
     })
     @Operation(summary = "Retorna un listado de libros")
+    @Timeout(0)
+    @Fallback(fallbackMethod = "getDefaultBook")
     @GET
     public Response findAll() {
         List<Libro> libros = libroService.findAll();
@@ -121,6 +127,13 @@ public class LibroResource {
     public Response delete(@PathParam("id") Long id) {
         libroService.delete(id);
         return Response.ok().build();
+    }
+
+    public Response getDefaultBook() {
+        Map<String, String> book = new HashMap<>();
+        book.put("Titulo", "Desarrollo de aplicaciones web con Jakarta EE");
+        book.put("Editorial", "Marcombo");
+        return Response.ok(book).build();
     }
 
 }
